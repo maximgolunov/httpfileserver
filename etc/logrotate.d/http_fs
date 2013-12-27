@@ -1,0 +1,11 @@
+/var/log/http_fs/*.log {
+        daily
+        missingok
+        rotate 30
+        nocompress
+        notifempty
+        create
+        postrotate
+                supervisorctl restart http_fs
+        endscript
+}
