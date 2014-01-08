@@ -56,7 +56,7 @@ class FileResource(tornado.web.RequestHandler):
                 self.set_status(304)
                 return
 
-        self.log.debug('Returning path [%s]' % path)
+        self.log.info('Returning path [%s]' % path)
         with open(path, "rb") as f:
             data = f.read()
             if include_body:
@@ -70,10 +70,16 @@ class FileResource(tornado.web.RequestHandler):
     
     def post(self, filename):
         path = os.path.abspath(os.path.join(self.file_dir, filename))
-        self.log.debug('Uploading at file path [%s]' % path)
-        
-        with open(path, 'wb') as out:
-            out.write(self.request.body)
+        for fileinfo in self.request.files.itervalues():
+            for http_file in fileinfo:
+                #self.log.info("fileinfo is %r" % (fileinfo, ))
+                self.log.info('Uploading at file path [%s] with body size %d' % (path, len(http_file['body']), ))
+            
+                with open(path, 'wb') as out:
+                    out.write(http_file['body'])
+                    
+                break
+            break
     
     def delete(self, filename):
         path = os.path.abspath(os.path.join(self.file_dir, filename))
@@ -82,7 +88,7 @@ class FileResource(tornado.web.RequestHandler):
         if not os.path.isfile(path):
             raise tornado.web.HTTPError(403, "%s is not a file", path)
         
-        self.log.debug('Deleting file path [%s]' % path)
+        self.log.info('Deleting file path [%s]' % path)
         
         os.remove(path)
     
