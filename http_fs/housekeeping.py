@@ -23,6 +23,9 @@ class task(object):
         self.callback.stop()
         
     def cleanup(self):
+        if not os.path.exists(self.file_dir):
+            return
+            
         self.log.debug('Running cleanup task in directory %s...' % (self.file_dir, ))
         
         threshold_date = datetime.datetime.now() - datetime.timedelta(seconds = self.file_ttl_sec)
@@ -36,7 +39,6 @@ class task(object):
                     os.remove(filepath)
         
         self.log.debug('Cleanup done.')
-        pass
     
     def _modification_date(self, filename):
         t = os.path.getmtime(filename)

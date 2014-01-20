@@ -10,6 +10,7 @@ import mimetypes
 import email.utils
 import time
 import logging
+import errno
     
 class FileResource(tornado.web.RequestHandler):
     def initialize(self, file_dir, file_ttl_sec):
@@ -69,6 +70,8 @@ class FileResource(tornado.web.RequestHandler):
         os.utime(path, None)
     
     def post(self, filename):
+        self._ensure_path_exists()
+        
         path = os.path.abspath(os.path.join(self.file_dir, filename))
         for fileinfo in self.request.files.itervalues():
             for http_file in fileinfo:
@@ -108,3 +111,8 @@ class FileResource(tornado.web.RequestHandler):
     def _modification_date(self, filename):
         t = os.path.getmtime(filename)
         return datetime.datetime.fromtimestamp(t)
+    
+    def _ensure_path_exists(self):
+        if not os.path.exists(self.file_dir):
+            self.log.info('Re-creating file directory at path [%s]' % self.file_dir)
+            os.makedirs(self.file_dir)
