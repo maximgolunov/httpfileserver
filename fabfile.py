@@ -1,5 +1,5 @@
 from __future__ import with_statement
-from fabric.api import local, settings, abort, run, env, put, sudo
+from fabric.api import run, env, put, sudo
 
 env.use_ssh_config = True
 env.hosts = ['223.197.230.172']

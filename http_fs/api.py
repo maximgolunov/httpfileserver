@@ -10,7 +10,6 @@ import mimetypes
 import email.utils
 import time
 import logging
-import errno
     
 class FileResource(tornado.web.RequestHandler):
     def initialize(self, file_dir, file_ttl_sec):
